@@ -73,6 +73,7 @@ const cardSchema = mongoose.Schema({
     ref: 'user',
   },
   movieId: {
+    type: String,
     required: true,
   },
   nameRU: {
