@@ -12,7 +12,7 @@ const validationCreateMovie = celebrate({
     image: Joi.string().required().pattern(urlRegex),
     trailerLink: Joi.string().required().pattern(urlRegex),
     thumbnail: Joi.string().required().pattern(urlRegex),
-    movieId: Joi.string().required(),
+    movieId: Joi.number().required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
   }),
@@ -20,7 +20,7 @@ const validationCreateMovie = celebrate({
 
 const validationMovieId = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().required().hex().length(24),
+    _id: Joi.string().required().hex().length(24),
   }),
 });
 

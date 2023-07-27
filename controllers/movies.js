@@ -7,38 +7,14 @@ const ForbiddenError = require('../errors/forbiddenError');
 const Movie = require('../models/movie');
 
 const getMovies = (req, res, next) => {
-  Movie.find({})
+  Movie.find({ owner: req.user._id })
     .then((movies) => res.send(movies))
     .catch((err) => next(err));
 };
 
 const createMovie = (req, res, next) => {
-  const {
-    country,
-    director,
-    duration,
-    year,
-    description,
-    image,
-    trailer,
-    thumbnail,
-    movieId,
-    nameRU,
-    nameEN,
-  } = req.body;
-
   Movie.create({
-    country,
-    director,
-    duration,
-    year,
-    description,
-    image,
-    trailer,
-    thumbnail,
-    movieId,
-    nameRU,
-    nameEN,
+    ...req.body,
     owner: req.user._id,
   })
     .then((movies) => res.send(movies))
@@ -52,7 +28,7 @@ const createMovie = (req, res, next) => {
 };
 
 const deleteMovie = (req, res, next) => {
-  Movie.findById(req.params.movieId)
+  Movie.findById(req.params._id)
     .then((movie) => {
       if (!movie) {
         throw new NotFoundError('Ошибка! Не найден фильм с указанным id');
@@ -60,8 +36,8 @@ const deleteMovie = (req, res, next) => {
       if (movie.owner.toString() !== req.user._id) {
         throw new ForbiddenError('Внимание! Невозможно удалить чужой фильм');
       }
-      Movie.findByIdAndRemove(req.params.movieId)
-        .then(() => res.send({ message: `Фильм ${req.params.movieId} удален` }))
+      Movie.findByIdAndRemove(req.params._id)
+        .then(() => res.send({ message: `Фильм ${req.params._id} удален` }))
         .catch((err) => next(err));
     })
     .catch((err) => {
