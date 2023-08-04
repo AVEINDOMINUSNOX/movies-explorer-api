@@ -9,8 +9,7 @@ const { errors } = require('celebrate');
 const cors = require('cors');
 
 /* Роуты */
-const userRouter = require('./routes/users');
-const movieRouter = require('./routes/movies');
+const router = require('./routes');
 
 /* Контроллеры */
 const { login, createUser } = require('./controllers/users');
@@ -52,8 +51,8 @@ app.get('/crash-test', () => {
 
 app.post('/signin', validationLoginUser, login);
 app.post('/signup', validationCreateUser, createUser);
-app.use(userRouter);
-app.use(movieRouter);
+
+app.use(router);
 app.use('*', () => {
   throw new NotFoundError('Запрашиваемая страница не найдена');
 });
