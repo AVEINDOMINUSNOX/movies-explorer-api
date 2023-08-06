@@ -1,5 +1,3 @@
-const URL_REGEX = /[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/;
-
 const DEFAULT_ERROR = 'Произошла ошибка';
 const PAGE_NOT_FOUND = 'Запрашиваемая страница не найдена';
 const INCORRECT_URL = 'Некорректный URL';
@@ -21,8 +19,9 @@ const INCORRECT_DATA_DEL_MOVIE = 'ОШИБКА! Переданы некорре�
 
 const SERVER_IS_FALLEN = 'Сервер упал';
 
+const urlRegex = /[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/;
+
 module.exports = {
-  URL_REGEX,
   DEFAULT_ERROR,
   PAGE_NOT_FOUND,
   INCORRECT_EMAIL,
@@ -39,4 +38,5 @@ module.exports = {
   INCORRECT_REG_DATA,
   INCORRECT_DATA_UPD_PROFILE,
   SERVER_IS_FALLEN,
+  urlRegex,
 };
