@@ -15,11 +15,13 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const rateLimiter = require('./middlewares/rateLimit');
 const handlerError = require('./middlewares/handlerError');
 const corsMiddleware = require('./middlewares/corsMiddleware');
-const { DB_CONFIG, PORT_CONFIG } = require('./utils/config');
+const { DB_CONFIG } = require('./utils/config');
 
 /* Ошибки */
 const NotFoundError = require('./errors/notFoundError');
 const { PAGE_NOT_FOUND } = require('./utils/constants');
+
+const { PORT = 3000 } = process.env;
 
 const app = express();
 app.use(cors());
@@ -43,6 +45,6 @@ app.use(errorLogger);
 app.use(errors());
 app.use(handlerError);
 
-app.listen(PORT_CONFIG, () => {
-  console.log(`Слушаем ${PORT_CONFIG}`);
+app.listen(PORT, () => {
+  console.log(`Слушаем ${PORT}`);
 });
