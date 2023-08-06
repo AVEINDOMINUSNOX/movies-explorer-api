@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 
+const { INCORRECT_URL } = require('../utils/constants');
+
 const cardSchema = mongoose.Schema({
   country: {
     type: String,
@@ -34,7 +36,7 @@ const cardSchema = mongoose.Schema({
           require_protocol: true,
         },
       ),
-      message: 'Некорректный URL',
+      message: INCORRECT_URL,
     },
   },
   trailerLink: {
@@ -49,7 +51,7 @@ const cardSchema = mongoose.Schema({
           require_protocol: true,
         },
       ),
-      message: 'Некорректный URL',
+      message: INCORRECT_URL,
     },
   },
   thumbnail: {
@@ -64,7 +66,7 @@ const cardSchema = mongoose.Schema({
           require_protocol: true,
         },
       ),
-      message: 'Некорректный URL',
+      message: INCORRECT_URL,
     },
   },
   owner: {

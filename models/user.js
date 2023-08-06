@@ -7,6 +7,12 @@ const validator = require('validator');
 const dataError = require('../errors/dataError');
 const tokenError = require('../errors/tokenError');
 
+const {
+  INCORRECT_EMAIL,
+  USER_IS_NOT_REG,
+  INCORRECT_EMAIL_OR_PASS,
+} = require('../utils/constants');
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -19,7 +25,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: validator.isEmail,
-      message: 'Некоррекный email',
+      message: INCORRECT_EMAIL,
     },
   },
   password: {
@@ -33,13 +39,13 @@ userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        return Promise.reject(new tokenError('Данный пользователь не зарегистрирован'));
+        return Promise.reject(new tokenError(USER_IS_NOT_REG));
       }
 
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            return Promise.reject(new dataError('Неправильные почта или пароль'));
+            return Promise.reject(new dataError(INCORRECT_EMAIL_OR_PASS));
           }
 
           return user;

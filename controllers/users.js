@@ -9,6 +9,13 @@ const EmailError = require('../errors/emailError');
 const NotFoundError = require('../errors/notFoundError');
 const DataError = require('../errors/dataError');
 
+const {
+  EMAIL_ALREADY_REG,
+  INCORRECT_REG_DATA,
+  USER_NOT_FOUND,
+  INCORRECT_DATA_UPD_PROFILE,
+} = require('../utils/constants');
+
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 const getUser = (req, res, next) => {
@@ -34,9 +41,9 @@ const createUser = (req, res, next) => {
         }))
         .catch((err) => {
           if (err.code === 11000) {
-            next(new EmailError('Внимание! Пользователь с указанным email уже зарегестрирован'));
+            next(new EmailError(EMAIL_ALREADY_REG));
           } else if (err.name === 'ValidationError') {
-            next(new DataError('Ошибка! При создании пользователя отправлены некорректные данные'));
+            next(new DataError(INCORRECT_REG_DATA));
           } else {
             next(err);
           }
@@ -64,13 +71,15 @@ const editUser = (req, res, next) => {
     { name, email },
     { new: true, runValidators: true },
   )
-    .orFail(() => new NotFoundError('Ошибка! Пользователь с указанным id не найден'))
+    .orFail(() => new NotFoundError(USER_NOT_FOUND))
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'NotFound') {
-        next(new NotFoundError('Ошибка! Пользователь с указанным id не найден'));
+        next(new NotFoundError(USER_NOT_FOUND));
       } else if (err.name === 'ValidationError') {
-        next(new DataError('Ошибка! Отправлены некорректные данные при обновлении профиля'));
+        next(new DataError(INCORRECT_DATA_UPD_PROFILE));
+      } else if (err.code === 11000) {
+        next(new EmailError(EMAIL_ALREADY_REG));
       } else {
         next(err);
       }

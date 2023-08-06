@@ -4,57 +4,38 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
 const { errors } = require('celebrate');
 const cors = require('cors');
 
 /* Роуты */
 const router = require('./routes');
 
-/* Контроллеры */
-const { login, createUser } = require('./controllers/users');
-
 /* Мидлвары */
-const { validationCreateUser, validationLoginUser } = require('./middlewares/validationJoiUser');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const rateLimiter = require('./middlewares/rateLimit');
 const handlerError = require('./middlewares/handlerError');
 const corsMiddleware = require('./middlewares/corsMiddleware');
+const { DB_CONFIG, PORT_CONFIG } = require('./utils/config');
 
 /* Ошибки */
 const NotFoundError = require('./errors/notFoundError');
+const { PAGE_NOT_FOUND } = require('./utils/constants');
 
-const { PORT = 3000 } = process.env;
 const app = express();
 app.use(cors());
-mongoose.connect('mongodb://127.0.0.1:27017/moviesdb');
+mongoose.connect(DB_CONFIG);
 
 app.use(express.json());
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
 app.use(requestLogger);
-app.use(limiter);
+app.use(rateLimiter);
 app.use(helmet());
 
 app.use(corsMiddleware);
 
-app.get('/crash-test', () => {
-  setTimeout(() => {
-    throw new Error('Сервер сейчас упадет');
-  }, 0);
-});
-
-app.post('/signin', validationLoginUser, login);
-app.post('/signup', validationCreateUser, createUser);
-
 app.use(router);
 app.use('*', () => {
-  throw new NotFoundError('Запрашиваемая страница не найдена');
+  throw new NotFoundError(PAGE_NOT_FOUND);
 });
 
 app.use(errorLogger);
@@ -62,6 +43,6 @@ app.use(errorLogger);
 app.use(errors());
 app.use(handlerError);
 
-app.listen(PORT, () => {
-  console.log(`Слушаем ${PORT}`);
+app.listen(PORT_CONFIG, () => {
+  console.log(`Слушаем ${PORT_CONFIG}`);
 });
